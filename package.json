@@ -21,7 +21,8 @@
     "url": "https://github.com/Martin36/react-gauge-chart"
   },
   "dependencies": {
-    "d3": "^5.12.0"
+    "d3": "^5.12.0",
+    "prop-types": "^15.7.2"
   },
   "scripts": {
     "start": "react-scripts start",
