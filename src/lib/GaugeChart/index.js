@@ -6,7 +6,7 @@ import {
 } from "d3";
 import PropTypes from "prop-types";
 
-import { useDeepCompareEffect } from "./customHooks";
+import { useDeepCompareEffect } from "./hooks";
 import { setArcData, renderChart } from './utils'
 
 /*
@@ -51,10 +51,10 @@ const GaugeChart = (props) => {
   const arcData = useRef([]);
   const pieChart = useRef(pie());
   const prevProps = useRef(props);
-  let selectedRef = useRef({});
+  const selectedRef = useRef();
 
   const initChart = useCallback(
-    (update, resize = false, prevProps) => {
+    (props, update, resize = false, prevProps) => {
       if (update) {
         renderChart(
           resize,
@@ -112,15 +112,15 @@ const GaugeChart = (props) => {
         arcData
       );
     },
-    [props]
+    []
   );
 
   useLayoutEffect(() => {
     setArcData(props, nbArcsToDisplay, colorArray, arcData);
-    container.current = select(selectedRef);
+    container.current = select(selectedRef.current);
     //Initialize chart
-    initChart();
-  }, [props, initChart]);
+    initChart(props);
+  }, []);
 
   useDeepCompareEffect(() => {
     if (
@@ -135,7 +135,7 @@ const GaugeChart = (props) => {
     const resize = !animateNeedleProps.some(
       (key) => prevProps.current[key] !== props[key]
     );
-    initChart(true, resize, prevProps.current);
+    initChart(props, true, resize, prevProps.current);
     prevProps.current = props;
   }, [
     props.nrOfLevels,
@@ -181,7 +181,7 @@ const GaugeChart = (props) => {
       id={id}
       className={className}
       style={style}
-      ref={(svg) => (selectedRef = svg)}
+      ref={selectedRef}
     />
   );
 };

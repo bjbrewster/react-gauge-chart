@@ -273,9 +273,11 @@ const centerGraph = (width, g, outerRadius, margin) => {
 const updateDimensions = (props, container, margin, width, height) => {
   //TODO: Fix so that the container is included in the component
   const { marginInPercent } = props;
-  var divDimensions = container.current.node().getBoundingClientRect(),
-    divWidth = divDimensions.width,
-    divHeight = divDimensions.height;
+  var divDimensions = process.env.NODE_ENV === 'test' 
+    ? { width: 500, height: 250 }
+    : container.current.node().getBoundingClientRect();
+  var divWidth = divDimensions.width;
+  var divHeight = divDimensions.height;
 
   //Set the new width and horizontal margins
   margin.current.left = divWidth * marginInPercent;
