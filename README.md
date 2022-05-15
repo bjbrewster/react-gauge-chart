@@ -100,7 +100,7 @@ The props for the chart:
 |-----------------|-----------------------------|----------------------------------------------------------------|------------------------|
 | id              | PropTypes.string.isRequired | Used for the identification of the div surrounding the chart   |                        |
 | className       | PropTypes.string            | Add `className` to the div container                           |                        |
-| style           | PropTypes.object            | Add `style` to the div container                               | { width: '100%' }      |
+| style           | PropTypes.object            | Add `style` to the div container                               |                        |
 | marginInPercent | PropTypes.number            | Margin for the chart inside the containing SVG element         | 0.05                   |
 | cornerRadius    | PropTypes.number            | Corner radius for the elements in the chart                    | 6                      |
 | nrOfLevels      | PropTypes.number            | The number of elements displayed in the arc                    | 3                      |

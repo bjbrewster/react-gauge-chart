@@ -3,12 +3,11 @@ import {
   pie,
   select,
   easeElastic,
-  scaleLinear,
   interpolateHsl,
   interpolateNumber,
 } from "d3";
 
-// Helper functions
+// Helpers
 const first = (array) => array[0]
 const last = (array) => array[array.length - 1]
 

@@ -16,10 +16,6 @@ The svg element surrounding the gauge will always be square
 
 //Constants
 
-const defaultStyle = {
-  width: "100%",
-};
-
 const GaugeChart = (props) => {
   const svg = useRef({});
   const g = useRef({});
@@ -83,7 +79,6 @@ const GaugeChart = (props) => {
 };
 
 GaugeChart.defaultProps = {
-  style: defaultStyle,
   marginInPercent: 0.05,
   cornerRadius: 6,
   nrOfLevels: 3,
