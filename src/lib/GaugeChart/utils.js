@@ -8,6 +8,9 @@ import {
   interpolateNumber,
 } from "d3";
 
+const startAngle = -Math.PI / 2; //Negative x-axis
+const endAngle = Math.PI / 2; //Positive x-axis
+
 // This function update arc's datas when component is mounting or when one of arc's props is updated
 export const setArcData = (props, nbArcsToDisplay, colorArray, arcData) => {
   // We have to make a decision about number of arcs to display
@@ -38,9 +41,8 @@ export const setArcData = (props, nbArcsToDisplay, colorArray, arcData) => {
   }
 };
 
-//Renders the chart, should be called every time the window is resized
+//Renders the chart
 export const renderChart = (
-  resize,
   prevProps,
   width,
   margin,
@@ -48,9 +50,7 @@ export const renderChart = (
   outerRadius,
   g,
   doughnut,
-  arcChart,
   needle,
-  pieChart,
   svg,
   props,
   container,
@@ -76,7 +76,7 @@ export const renderChart = (
     "translate(" + outerRadius.current + ", " + outerRadius.current + ")"
   );
   //Setup the arc
-  arcChart.current
+  const arcChart = arc()
     .outerRadius(outerRadius.current)
     .innerRadius(outerRadius.current * (1 - props.arcWidth))
     .cornerRadius(props.cornerRadius)
@@ -85,22 +85,27 @@ export const renderChart = (
   doughnut.current.selectAll(".arc").remove();
   needle.current.selectAll("*").remove();
   g.current.selectAll(".text-group").remove();
+  //Set up the pie generator
+  const pieChart = pie()
+    .value((d) => d.value)
+    .startAngle(startAngle)
+    .endAngle(endAngle)
+    .sort(null);
   //Draw the arc
   var arcPaths = doughnut.current
     .selectAll(".arc")
-    .data(pieChart.current(arcData.current))
+    .data(pieChart(arcData.current))
     .enter()
     .append("g")
     .attr("class", "arc");
   arcPaths
     .append("path")
-    .attr("d", arcChart.current)
+    .attr("d", arcChart)
     .style("fill", function (d) {
       return d.data.color;
     });
 
   drawNeedle(
-    resize,
     prevProps,
     props,
     width,
@@ -131,9 +136,7 @@ const getColors = (props, nbArcsToDisplay) => {
   return colorArray;
 };
 
-//If 'resize' is true then the animation does not play
 const drawNeedle = (
-  resize,
   prevProps,
   props,
   width,
@@ -161,7 +164,7 @@ const drawNeedle = (
     addText(percent, props, outerRadius, width, g);
   }
   //Rotate the needle
-  if (!resize && animate) {
+  if (animate) {
     needle.current
       .transition()
       .delay(props.animDelay)

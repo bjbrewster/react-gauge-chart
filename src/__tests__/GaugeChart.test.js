@@ -78,8 +78,7 @@ it("renders", async () => {
   `);
 });
 
-// Disabled failed test. Will fix next.
-xit("should only render chart once", () => {
+it("should only render chart once", () => {
   const utils = require("../lib/GaugeChart/utils");
   const renderChart = jest.spyOn(utils, "renderChart");
 

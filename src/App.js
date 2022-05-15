@@ -10,7 +10,7 @@ const App = () => {
 	useEffect(() => {
 		const timer = setTimeout(() => {
       setCurrentPercent(Math.random());
-      setArcs([0.1, 0.5, 0.4])
+      setArcs([Math.random(), Math.random(), Math.random()])
 		}, 3000);
 
 		return () => {
