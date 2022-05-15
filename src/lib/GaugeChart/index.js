@@ -3,7 +3,7 @@ import { select } from "d3";
 import PropTypes from "prop-types";
 
 import { useDeepCompareEffect } from "./hooks";
-import { setArcData, renderChart } from './utils'
+import { renderChart } from './utils'
 
 /*
 GaugeChart creates a gauge chart using D3
@@ -30,9 +30,6 @@ const GaugeChart = (props) => {
   const outerRadius = useRef({});
   const margin = useRef({}); // = {top: 20, right: 50, bottom: 50, left: 50},
   const container = useRef({});
-  const nbArcsToDisplay = useRef(0);
-  const colorArray = useRef([]);
-  const arcData = useRef([]);
   const prevProps = useRef();
   const selectedRef = useRef();
 
@@ -50,15 +47,6 @@ const GaugeChart = (props) => {
   }, [initChart]);
 
   useDeepCompareEffect(() => {
-    if (
-      !prevProps.current ||
-      props.nrOfLevels ||
-      prevProps.current.arcsLength.every((a) => props.arcsLength.includes(a)) ||
-      prevProps.current.colors.every((a) => props.colors.includes(a))
-    ) {
-      setArcData(props, nbArcsToDisplay, colorArray, arcData);
-    }
-
     renderChart(
       prevProps.current,
       width,
@@ -71,7 +59,6 @@ const GaugeChart = (props) => {
       svg,
       props,
       container,
-      arcData
     );
 
     prevProps.current = props;

@@ -8,37 +8,32 @@ import {
   interpolateNumber,
 } from "d3";
 
+// Helper functions
+const first = (array) => array[0]
+const last = (array) => array[array.length - 1]
+
+// Constants
 const startAngle = -Math.PI / 2; //Negative x-axis
 const endAngle = Math.PI / 2; //Positive x-axis
 
-// This function update arc's datas when component is mounting or when one of arc's props is updated
-export const setArcData = (props, nbArcsToDisplay, colorArray, arcData) => {
+// Returns array of arc data (length and color) for pie and arc generator
+const getArcData = ({ nrOfLevels, arcsLength, colors }) => {
   // We have to make a decision about number of arcs to display
   // If arcsLength is setted, we choose arcsLength length instead of nrOfLevels
-  nbArcsToDisplay.current = props.arcsLength
-    ? props.arcsLength.length
-    : props.nrOfLevels;
+  const nbArcsToDisplay = arcsLength ? arcsLength.length : nrOfLevels;
 
   //Check if the number of colors equals the number of levels
   //Otherwise make an interpolation
-  if (nbArcsToDisplay.current === props.colors.length) {
-    colorArray.current = props.colors;
-  } else {
-    colorArray.current = getColors(props, nbArcsToDisplay);
-  }
+  const arcColors = (nbArcsToDisplay === colors.length)
+    ? colors
+    : interpolateColors(first(colors), last(colors), nbArcsToDisplay);
+  
   //The data that is used to create the arc
   // Each arc could have hiw own value width arcsLength prop
-  arcData.current = [];
-  for (var i = 0; i < nbArcsToDisplay.current; i++) {
-    var arcDatum = {
-      value:
-        props.arcsLength && props.arcsLength.length > i
-          ? props.arcsLength[i]
-          : 1,
-      color: colorArray.current[i],
-    };
-    arcData.current.push(arcDatum);
-  }
+  return arcColors.map((color, index) => ({
+    value: arcsLength ? arcsLength[index] : 1,
+    color,
+  }))
 };
 
 //Renders the chart
@@ -54,9 +49,9 @@ export const renderChart = (
   svg,
   props,
   container,
-  arcData
 ) => {
   updateDimensions(props, container, margin, width, height);
+
   //Set dimensions of svg element and translations
   svg.current
     .attr("width", width.current + margin.current.left + margin.current.right)
@@ -94,7 +89,7 @@ export const renderChart = (
   //Draw the arc
   var arcPaths = doughnut.current
     .selectAll(".arc")
-    .data(pieChart(arcData.current))
+    .data(pieChart(getArcData(props)))
     .enter()
     .append("g")
     .attr("class", "arc");
@@ -121,20 +116,13 @@ export const renderChart = (
   );
 };
 
-//Depending on the number of levels in the chart
-//This function returns the same number of colors
-const getColors = (props, nbArcsToDisplay) => {
-  const { colors } = props;
-  var colorScale = scaleLinear()
-    .domain([1, nbArcsToDisplay.current])
-    .range([colors[0], colors[colors.length - 1]]) //Use the first and the last color as range
-    .interpolate(interpolateHsl);
-  var colorArray = [];
-  for (var i = 1; i <= nbArcsToDisplay.current; i++) {
-    colorArray.push(colorScale(i));
-  }
-  return colorArray;
-};
+const interpolateColors = (startColor, endColor, length) => {
+  const interpolator = interpolateHsl(startColor, endColor)
+
+  return length > 1 
+    ? Array.from({ length }, (_, i) => interpolator(i / (length - 1)))
+    : [startColor]
+}
 
 const drawNeedle = (
   prevProps,
